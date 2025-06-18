@@ -9,20 +9,15 @@ Header.pack(fill='x')
 Header2=tk.Frame(root,bg='gray',height=25)
 Header2.pack(side='bottom',fill='x')
 
-board=tk.Canvas(root,width=600,height=750)
-board.pack(expand=False,fill='both')
+board=tk.Canvas(root,width=600,height=650)
+board.pack(pady=0, padx=0, expand=True)
 
- 
 
-i=0
-j=0
+
+#extract pieces 
 n=int(596/8)
-x1=0
-x2=n
-y1=0
-y2=n
 img=tk.PhotoImage(file="white-pawn.png")
-whitePawn1 = img.subsample(2, 2)
+whitePawn = img.subsample(2, 2)
 img=tk.PhotoImage(file="white-rook.png")
 whiteRook=img.subsample(2,2)
 img=tk.PhotoImage(file="white-knight.png")
@@ -30,12 +25,12 @@ whiteKnight=img.subsample(2,2)
 img=tk.PhotoImage(file="white-bishop.png")
 whiteBishop=img.subsample(2,2)
 img=tk.PhotoImage(file="white-queen.png")
-whiteQueen=img.subsample(2,2)
+whiteQueeni=img.subsample(2,2)
 img=tk.PhotoImage(file="white-king.png")
-whiteKing=img.subsample(2,2)
+whiteKingi=img.subsample(2,2)
 
 img=tk.PhotoImage(file="black-pawn.png")
-blackPawn1 = img.subsample(2, 2)
+blackPawn = img.subsample(2, 2)
 img=tk.PhotoImage(file="black-rook.png")
 blackRook=img.subsample(2,2)
 img=tk.PhotoImage(file="black-knight.png")
@@ -43,59 +38,124 @@ blackKnight=img.subsample(2,2)
 img=tk.PhotoImage(file="black-bishop.png")
 blackBishop=img.subsample(2,2)
 img=tk.PhotoImage(file="black-queen.png")
-blackQueen=img.subsample(2,2)
+blackQueeni=img.subsample(2,2)
 img=tk.PhotoImage(file="black-king.png")
-blackKing=img.subsample(2,2)
+blackKingi=img.subsample(2,2)
+boardPositions=[[0 for j in range(8)] for i in range(8)]
+rectangles=[[0 for j in range(8)] for i in range(8)]
 
-while i<=8:
-    while j<=8:
+
+#creating board
+for i in range(8):
+    for j in range(8):
         if (i+j)%2==0:
             colour='darkgrey'
             colour2='snow'
         else:
             colour='snow'
             colour2='darkgrey'
+
+        x1=j*n
+        y1=i*n
+        x2 =x1 + n
+        y2 =y1 + n
+        blockNum=chr(j+97)+str(i+1)
+        rectangles[i][j]=board.create_rectangle(x1,y1,x2,y2,fill=colour)
+        board.create_text(x2-8, y2-8, text=blockNum, font=("Arial", int(n/8)),fill='black')
+        boardPositions[i][j]={'x':int((x1+x2)/2),'y':int( (y1+y2)/2)}
+
+#placing pieces
+piecePosition={}
+whitePawnlist=[]
+blackPawnlist=[]
+for j in range(8):
+            if j==0:
+                    whiteRook1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteRook)
+                    piecePosition['whiteRook1']=[0,j]
+            if j==7:
+                    whiteRook2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteRook)
+                    piecePosition['whiteRook2']=[0,j]
+            if j==1:
+                    whiteKnight1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKnight)
+                    piecePosition['whiteKnight1']=[0,j]
+            if j==6:
+                    whiteKnight2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKnight)
+                    piecePosition['whiteKnight2']=[0,j]
+            if j==2:
+                    whiteBishop1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteBishop)
+                    piecePosition['whiteBishop1']=[0,j]
+            if j==5:
+                    whiteBishop1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteBishop)
+                    piecePosition['whiteBishop2']=[0,j]
+            if j==3:
+                    whiteQueen=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteQueeni)
+                    piecePosition['whiteQueen']=[0,j]
+            if j==4:
+                    whiteKing=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKingi)
+                    piecePosition['whiteKing']=[0,j]
+            whitePawnlist.append(board.create_image(boardPositions[1][j]['x'],boardPositions[1][j]['y'], image=whitePawn))
             
-        blockNum=chr(j+96)+str(i)
-        
-        board.create_rectangle(x1,y1,x2,y2,fill=colour)
-        board.create_text(x1-8, y1-8, text=blockNum, font=("Arial", int(n/8)),fill='black')
-        #knight = board.create_text(int((x1+x2)/2),int( (y1+y2)/2), text="♘", font=("Arial", 36))
-        if i==1:
-            if j==1 or j==8:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=whiteRook)
-            if j==2 or j==7:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=whiteKnight)
-            if j==3 or j==6:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=whiteBishop)
-            if j==4:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=whiteQueen)
+for j in range(8):
+            if j==0:
+                    blackRook6=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackRook)
+                    piecePosition['blackRook6']=[7,j]
+            if j==7:
+                    blackRook2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackRook)
+                    piecePosition['blackRook2']=[7,j]
+            if j==1:
+                    blackKnight61=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKnight)
+                    piecePosition['blackKnight6']=[7,j]
+            if j==6:
+                    blackKnight2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKnight)
+                    piecePosition['blackKnight2']=[7,j]
+            if j==2:
+                    blackBishop1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackBishop)
+                    piecePosition['blackBishop6']=[7,j]
             if j==5:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=whiteKing)
-        if i==2:
-            board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=whitePawn1)
-
-        if i==8:
-            if j==1 or j==8:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=blackRook)
-            if j==2 or j==7:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=blackKnight)
-            if j==3 or j==6:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=blackBishop)
+                    blackBishop6=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackBishop)
+                    piecePosition['blackBishop2']=[7,j]
+            if j==3:
+                    blackQueen=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackQueeni)
+                    piecePosition['blackQueen']=[7,j]
             if j==4:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=blackQueen)
-            if j==5:
-                    board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=blackKing)
+                    blackKing=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKingi)
+                    piecePosition['blackKing']=[7,j]
+            blackPawnlist.append(board.create_image(boardPositions[6][j]['x'],boardPositions[6][j]['y'], image=blackPawn))
 
-        if i==7:
-            board.create_image(int((x1+x2)/2),int( (y1+y2)/2), image=blackPawn1)
-        x2=x1
-        x1=n*(j+1)
-        j+=1
-    y2=y1
-    y1=n*(i+1)
-    x1=0
-    j=0
-    i+=1    
+
+whitePawns=tuple(whitePawnlist)
+blackPawns=tuple(blackPawnlist)
+for j in range(8):
+        piecePosition[whitePawns]=[1,j]
+        piecePosition[blackPawns]=[6,j]
+
+
+#outlining board
+all_pieces = [whiteRook1, whiteRook2, whiteKnight1, whiteKnight2, whiteBishop1, 
+              whiteQueen, whiteKing, blackRook6, blackRook2, blackKnight61, 
+              blackKnight2, blackBishop1, blackBishop6, blackQueen, blackKing]
+
+all_pieces.extend(whitePawnlist)
+all_pieces.extend(blackPawnlist)
+
+for piece in all_pieces:
+    x,y=board.coords(piece)
+    j = int(x/n)
+    i=int(y/n)
+    print(i,j)
+
+    board.tag_bind(piece, '<Enter>', lambda event,rect=rectangles[i][j]: on_Enter_rect(event,rect))
+    board.tag_bind(piece, '<Leave>', lambda event,rect=rectangles[i][j]: on_Leave_rect(event,rect))
+
+def on_Enter_rect(event,rect):
+        board.itemconfig(rect, outline='red',width=3)
+def on_Leave_rect(event,rect):
+        board.itemconfig(rect, outline='black',width=1)
+
+
+for i in range(8):
+        for j in range(8):
+                board.tag_bind(rectangles[i][j],'<Enter>',lambda event,rect=rectangles[i][j]: on_Enter_rect(event,rect))
+                board.tag_bind(rectangles[i][j],'<Leave>',lambda event,rect=rectangles[i][j]: on_Leave_rect(event,rect))
 
 root.mainloop()
