@@ -277,7 +277,6 @@ def promotion (piece):
                 b4=tk.Button(leftFrame, text="Bishop", command=lambda: choose("B"))
                 b4.pack(side='right')
                 root.wait_variable(selected)
-                print(selected.get())
                 if selected.get()=='Q':
                         whiteQueen2=board.create_image(boardPositions[x][y]['x'],boardPositions[x][y]['y'], image=whiteQueeni)
                         board.delete(all_pieces[piece])
@@ -374,14 +373,12 @@ def promotion (piece):
 def check(position,piece):
         moves=[]
         if 'white' in piece:
-                print('White in check: ',end=' ')
                 for attacker in black_pieces:
                         if attacker != 'blackKing':
                                 moves.extend(get_moves(attacker))
                         else :
                                 moves.extend(king_moves_wo_check('blackKing'))
         elif 'black' in piece:
-                print('Black in check: ',end=' ')
                 for attacker in white_pieces:
                         if attacker != 'whiteKing':
                                 moves.extend(get_moves(attacker))
@@ -389,9 +386,7 @@ def check(position,piece):
                                 moves.extend(king_moves_wo_check('whiteKing'))
         for move in moves:
                 if move==position:
-                        print (True)
                         return True
-        print(False)
         return False
                 
 
