@@ -5,20 +5,21 @@ root=tk.Tk()
 root.geometry("1280x700")
 root.title("Chess")
 
-header=tk.Frame(root, bg='black',height=30)
+header=tk.Frame(root, bg='black',height=50)
 header.pack(fill='x')
+header.pack_propagate(False)
 
 turn_label = tk.Label(header, text="Turn: White", bg='black', fg='white', font=('Arial', 14, 'bold'))
 turn_label.pack(side='left', padx=20, pady=10)
 
-game_status_label = tk.Label(header, text="Game Status: Active", bg='black', fg='white', font=('Arial', 14))
-game_status_label.pack(side='right', padx=20, pady=10)
+game_status_label = tk.Label(header, text="Game Status: UnActive", bg='black', fg='white', font=('Arial', 14))
+game_status_label.pack(side='right', padx=20, pady=8)
 
 leftFrame=tk.Frame(root,bg='gray',width=200,height=650)
 leftFrame.pack(side='left',fill='y')
 leftFrame.pack_propagate(False)
 
-white_title = tk.Label(leftFrame, text="WHITE PLAYER", bg='lightgray', fg='black', font=('Arial', 16, 'bold'))
+white_title = tk.Label(leftFrame, text="WHITE PLAYER", bg='black', fg='snow', font=('Cooper black', 16, 'bold'))
 white_title.pack(pady=(10, 5))
 
 white_captures_frame = tk.LabelFrame(leftFrame, text="Captured Pieces", bg='lightgray', fg='black', font=('Arial', 12, 'bold'))
@@ -27,17 +28,17 @@ white_captures_frame.pack(fill='x', padx=10, pady=5)
 white_captures_content = tk.Frame(white_captures_frame, bg='lightgray')
 white_captures_content.pack(fill='x', padx=5, pady=5)
 
-white_promotion_frame = tk.LabelFrame(leftFrame, text="Promotion Options", bg='lightgray', fg='black', font=('Arial', 12, 'bold'))
-white_promotion_frame.pack(fill='x', padx=10, pady=5)
+white_captures_content_pawn=tk.Frame(white_captures_content,bg='lightgrey')
+white_captures_content_pawn.pack(side='left',fill='x',padx=5,pady=5)
 
-controls_frame = tk.LabelFrame(leftFrame, text="Game Controls", bg='lightgray', fg='black', font=('Arial', 12, 'bold'))
-controls_frame.pack(fill='x', padx=10, pady=5)
-
+white_captures_content_others=tk.Frame(white_captures_content,bg='lightgrey')
+white_captures_content_others.pack(side='right',fill='x',padx=5,pady=5)
+                                                                                                                                                                                       
 rightFrame=tk.Frame(root,bg='gray',width=200,height=650)
 rightFrame.pack(side='right',fill='y')
 rightFrame.pack_propagate(False)
 
-black_title = tk.Label(rightFrame, text="BLACK PLAYER", bg='darkgray', fg='white', font=('Arial', 16, 'bold'))
+black_title = tk.Label(rightFrame, text="BLACK PLAYER", bg='snow', fg='black', font=('Cooper black', 16, 'bold'))
 black_title.pack(pady=(10, 5))
 
 black_captures_frame = tk.LabelFrame(rightFrame, text="Captured Pieces", bg='darkgray', fg='white', font=('Arial', 12, 'bold'))
@@ -46,8 +47,13 @@ black_captures_frame.pack(fill='x', padx=10, pady=5)
 black_captures_content = tk.Frame(black_captures_frame, bg='darkgray')
 black_captures_content.pack(fill='x', padx=5, pady=5)
 
-black_promotion_frame = tk.LabelFrame(rightFrame, text="Promotion Options", bg='darkgray', fg='white', font=('Arial', 12, 'bold'))
-black_promotion_frame.pack(fill='x', padx=10, pady=5)
+black_captures_content_pawn=tk.Frame(black_captures_content,bg='lightgrey')
+black_captures_content_pawn.pack(side='left',fill='x',padx=5,pady=5)
+
+black_captures_content_others=tk.Frame(black_captures_content,bg='lightgrey')
+black_captures_content_others.pack(side='right',fill='x',padx=5,pady=5)
+
+
 
 board=tk.Canvas(root,width=600,height=650)
 board.pack(pady=0, padx=0, expand=True)
@@ -82,6 +88,40 @@ blackKingi=img.subsample(2,2)
 boardPositions=[[0 for j in range(8)] for i in range(8)]
 rectangles=[[0 for j in range(8)] for i in range(8)]
 
+whiteKing = None
+whiteQueen = None
+whiteRook1 = None
+whiteRook2 = None
+whiteKnight1 = None
+whiteKnight2 = None
+whiteBishop1 = None
+whiteBishop2 = None
+whitePawn1 = None
+whitePawn2 = None
+whitePawn3 = None
+whitePawn4 = None
+whitePawn5 = None
+whitePawn6 = None
+whitePawn7 = None
+whitePawn8 = None
+
+blackKing = None
+blackQueen = None
+blackRook1 = None
+blackRook2 = None
+blackKnight1 = None
+blackKnight2 = None
+blackBishop1 = None
+blackBishop2 = None
+blackPawn1 = None
+blackPawn2 = None
+blackPawn3 = None
+blackPawn4 = None
+blackPawn5 = None
+blackPawn6 = None
+blackPawn7 = None
+blackPawn8 = None
+
 
 #creating board
 for i in range(8):
@@ -102,9 +142,6 @@ for i in range(8):
         board.create_text(x2-8, y2-8, text=blockNum, font=("Arial", int(n/8)),fill='black')
         boardPositions[i][j]={'x':int((x1+x2)/2),'y':int( (y1+y2)/2)}
 
-
-
-#placing pieces
 unicode_pieces = {
     'whiteRook1': '♖',
     'whiteRook2': '♖',
@@ -141,118 +178,142 @@ unicode_pieces = {
     'blackPawn8': '♟',
 }
 piecePosition={}
-whitePawnlist=[]
-blackPawnlist=[]
-for j in range(8):
-            if j==0:
-                    whiteRook1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteRook)
-                    piecePosition['whiteRook1']=[0,j]
-            if j==7:
-                    whiteRook2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteRook)
-                    piecePosition['whiteRook2']=[0,j]
-            if j==1:
-                    whiteKnight1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKnight)
-                    piecePosition['whiteKnight1']=[0,j]
-            if j==6:
-                    whiteKnight2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKnight)
-                    piecePosition['whiteKnight2']=[0,j]
-            if j==2:
-                    whiteBishop1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteBishop)
-                    piecePosition['whiteBishop1']=[0,j]
-            if j==5:
-                    whiteBishop2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteBishop)
-                    piecePosition['whiteBishop2']=[0,j]
-            if j==3:
-                    whiteQueen=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteQueeni)
-                    piecePosition['whiteQueen']=[0,j]
-            if j==4:
-                    whiteKing=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKingi)
-                    piecePosition['whiteKing']=[0,j]
-            whitePawnlist.append(board.create_image(boardPositions[1][j]['x'],boardPositions[1][j]['y'], image=whitePawn))          
-for j in range(8):
-            if j==0:
-                    blackRook1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackRook)
-                    piecePosition['blackRook1']=[7,j]
-            if j==7:
-                    blackRook2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackRook)
-                    piecePosition['blackRook2']=[7,j]
-            if j==1:
-                    blackKnight1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKnight)
-                    piecePosition['blackKnight1']=[7,j]
-            if j==6:
-                    blackKnight2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKnight)
-                    piecePosition['blackKnight2']=[7,j]
-            if j==2:
-                    blackBishop1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackBishop)
-                    piecePosition['blackBishop1']=[7,j]
-            if j==5:
-                    blackBishop2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackBishop)
-                    piecePosition['blackBishop2']=[7,j]
-            if j==3:
-                    blackQueen=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackQueeni)
-                    piecePosition['blackQueen']=[7,j]
-            if j==4:
-                    blackKing=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKingi)
-                    piecePosition['blackKing']=[7,j]
-            blackPawnlist.append(board.create_image(boardPositions[6][j]['x'],boardPositions[6][j]['y'], image=blackPawn))
-for i in range(8):
-        piecePosition[f'whitePawn{i+1}'] = [1,i]
-        piecePosition[f'blackPawn{i+1}'] = [6,i]
+white_pieces={}
+black_pieces={}
+all_pieces={}
+
+#placing pieces
+def place_pieces():
+        whitePawnlist=[]
+        blackPawnlist=[]
+        global whiteKing, whiteQueen, whiteRook1, whiteRook2, whiteKnight1, whiteKnight2
+        global whiteBishop1, whiteBishop2, whitePawn1, whitePawn2, whitePawn3, whitePawn4
+        global whitePawn5, whitePawn6, whitePawn7, whitePawn8
+
+        global blackKing, blackQueen, blackRook1, blackRook2, blackKnight1, blackKnight2
+        global blackBishop1, blackBishop2, blackPawn1, blackPawn2, blackPawn3, blackPawn4
+        global blackPawn5, blackPawn6, blackPawn7, blackPawn8
+
+        global white_pieces,black_pieces,all_pieces,piecePosition
+
+        for j in range(8):
+                if j==0:
+                        whiteRook1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteRook)
+                        piecePosition['whiteRook1']=[0,j]
+                if j==7:
+                        whiteRook2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteRook)
+                        piecePosition['whiteRook2']=[0,j]
+                if j==1:
+                        whiteKnight1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKnight)
+                        piecePosition['whiteKnight1']=[0,j]
+                if j==6:
+                        whiteKnight2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKnight)
+                        piecePosition['whiteKnight2']=[0,j]
+                if j==2:
+                        whiteBishop1=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteBishop)
+                        piecePosition['whiteBishop1']=[0,j]
+                if j==5:
+                        whiteBishop2=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteBishop)
+                        piecePosition['whiteBishop2']=[0,j]
+                if j==3:
+                        whiteQueen=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteQueeni)
+                        piecePosition['whiteQueen']=[0,j]
+                if j==4:
+                        whiteKing=board.create_image(boardPositions[0][j]['x'],boardPositions[0][j]['y'], image=whiteKingi)
+                        piecePosition['whiteKing']=[0,j]
+                whitePawnlist.append(board.create_image(boardPositions[1][j]['x'],boardPositions[1][j]['y'], image=whitePawn))          
+        for j in range(8):
+                if j==0:
+                        blackRook1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackRook)
+                        piecePosition['blackRook1']=[7,j]
+                if j==7:
+                        blackRook2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackRook)
+                        piecePosition['blackRook2']=[7,j]
+                if j==1:
+                        blackKnight1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKnight)
+                        piecePosition['blackKnight1']=[7,j]
+                if j==6:
+                        blackKnight2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKnight)
+                        piecePosition['blackKnight2']=[7,j]
+                if j==2:
+                        blackBishop1=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackBishop)
+                        piecePosition['blackBishop1']=[7,j]
+                if j==5:
+                        blackBishop2=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackBishop)
+                        piecePosition['blackBishop2']=[7,j]
+                if j==3:
+                        blackQueen=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackQueeni)
+                        piecePosition['blackQueen']=[7,j]
+                if j==4:
+                        blackKing=board.create_image(boardPositions[7][j]['x'],boardPositions[7][j]['y'], image=blackKingi)
+                        piecePosition['blackKing']=[7,j]
+                blackPawnlist.append(board.create_image(boardPositions[6][j]['x'],boardPositions[6][j]['y'], image=blackPawn))
+        for i in range(8):
+                piecePosition[f'whitePawn{i+1}'] = [1,i]
+                piecePosition[f'blackPawn{i+1}'] = [6,i]
 
 
-white_pieces={
-        'whiteRook1': whiteRook1,
-        'whiteRook2': whiteRook2,
-        'whiteKnight1': whiteKnight1,
-        'whiteKnight2': whiteKnight2,
-        'whiteBishop1': whiteBishop1,
-        'whiteBishop2': whiteBishop2,
-        'whiteQueen': whiteQueen,
-        'whiteKing': whiteKing
-}
-for i in range(8):
-        white_pieces[f'whitePawn{i+1}'] = whitePawnlist[i]
+        white_pieces={
+                'whiteRook1': whiteRook1,
+                'whiteRook2': whiteRook2,
+                'whiteKnight1': whiteKnight1,
+                'whiteKnight2': whiteKnight2,
+                'whiteBishop1': whiteBishop1,
+                'whiteBishop2': whiteBishop2,
+                'whiteQueen': whiteQueen,
+                'whiteKing': whiteKing
+        }
+        for i in range(8):
+                white_pieces[f'whitePawn{i+1}'] = whitePawnlist[i]
 
-black_pieces={
-        'blackRook1': blackRook1,
-        'blackRook2': blackRook2,
-        'blackKnight1': blackKnight1,
-        'blackKnight2': blackKnight2,
-        'blackBishop1': blackBishop1,
-        'blackBishop2': blackBishop2,
-        'blackQueen': blackQueen,
-        'blackKing': blackKing
-}
-for i in range(8):
-        black_pieces[f'blackPawn{i+1}'] = blackPawnlist[i]
+        black_pieces={
+                'blackRook1': blackRook1,
+                'blackRook2': blackRook2,
+                'blackKnight1': blackKnight1,
+                'blackKnight2': blackKnight2,
+                'blackBishop1': blackBishop1,
+                'blackBishop2': blackBishop2,
+                'blackQueen': blackQueen,
+                'blackKing': blackKing
+        }
+        for i in range(8):
+                black_pieces[f'blackPawn{i+1}'] = blackPawnlist[i]
 
-all_pieces = white_pieces.copy()
-all_pieces.update(black_pieces)
-
+        all_pieces.update(white_pieces)
+        all_pieces.update(black_pieces)
 
 
 #outlining board
-for name,piece in all_pieces.items():
-    x,y=piecePosition[name]
-    j = y
-    i= x
+def outline():
+        global all_pieces
 
-    board.tag_bind(piece, '<Enter>', lambda event,rect=rectangles[i][j]: on_Enter_rect(event,rect))
-    board.tag_bind(piece, '<Leave>', lambda event,rect=rectangles[i][j]: on_Leave_rect(event,rect))
+        def on_Enter_rect(event,rect):
+                board.itemconfig(rect, outline='black',width=6)
+        def on_Leave_rect(event,rect):
+                board.itemconfig(rect, outline='black',width=1)
 
-def on_Enter_rect(event,rect):
-        board.itemconfig(rect, outline='black',width=6)
-def on_Leave_rect(event,rect):
-        board.itemconfig(rect, outline='black',width=1)
 
-def back():
-      if len(clicked_moves)>0:  
-        for rects in clicked_moves[-1]:
+        for name,piece in all_pieces.items():
+                x,y=piecePosition[name]
+                j = y
+                i= x
+                board.tag_bind(piece, '<Enter>', lambda event,rect=rectangles[i][j]: on_Enter_rect(event,rect))
+                board.tag_bind(piece, '<Leave>', lambda event,rect=rectangles[i][j]: on_Leave_rect(event,rect))
+def remove_outline():
+        for name,piece in all_pieces.items():
+                x,y=piecePosition[name]
+                j = y
+                i= x
+                board.tag_bind(piece, '<Enter>', '')
+                board.tag_bind(piece, '<Leave>', '')
+def remove_avail_moves_outline():
+      if len(avail_moves)>0:  
+        for rects in avail_moves[-1]:
                 board.itemconfig(rects,width=0)
                 board.tag_bind(rects,'<Enter>',lambda event,rect=rects: on_Enter_rect(event,rect))
                 board.tag_bind(rects,'<Leave>',lambda event,rect=rects: on_Leave_rect(event,rect))
                 board.tag_unbind(rects,'<Button-1>')
-def backButtons(moves,isWhite):
+def remove_click(moves,isWhite):
         for move in moves:
                 x,y=move
                 board.tag_unbind(rectangles[x][y],'<Button-1>')
@@ -262,19 +323,23 @@ def backButtons(moves,isWhite):
         else :
                 for piece in black_pieces:
                         board.tag_unbind(black_pieces[piece], '<Button-1>')
+
+
 def promotion (piece):
         selected=tk.StringVar()
         x,y=piecePosition[piece]
         if 'white' in piece:
                 def choose(option):
                         selected.set(option)
-                b1=tk.Button(leftFrame, text="Queen", command=lambda: choose("Q"))
+                white_promotion_frame = tk.LabelFrame(leftFrame, text="Promotion Options", bg='lightgray', fg='black', font=('Arial', 12, 'bold'))
+                white_promotion_frame.pack(fill='x', padx=10, pady=5)
+                b1=tk.Button(white_promotion_frame, text="Queen", command=lambda: choose("Q"))
                 b1.pack(side='right')
-                b2=tk.Button(leftFrame, text="Knight", command=lambda: choose("K"))
+                b2=tk.Button(white_promotion_frame, text="Knight", command=lambda: choose("K"))
                 b2.pack(side='right')
-                b3=tk.Button(leftFrame, text="Rook", command=lambda: choose("R"))
+                b3=tk.Button(white_promotion_frame, text="Rook", command=lambda: choose("R"))
                 b3.pack(side='right')
-                b4=tk.Button(leftFrame, text="Bishop", command=lambda: choose("B"))
+                b4=tk.Button(white_promotion_frame, text="Bishop", command=lambda: choose("B"))
                 b4.pack(side='right')
                 root.wait_variable(selected)
                 if selected.get()=='Q':
@@ -317,16 +382,19 @@ def promotion (piece):
                 b2.destroy()
                 b3.destroy()
                 b4.destroy()
+                white_promotion_frame.destroy()
         if 'black' in piece:
                 def choose(option):
                         selected.set(option)
-                b1=tk.Button(rightFrame, text="Queen", command=lambda: choose("Q"))
+                black_promotion_frame = tk.LabelFrame(rightFrame, text="Promotion Options", bg='darkgray', fg='white', font=('Arial', 12, 'bold'))
+                black_promotion_frame.pack(fill='x', padx=10, pady=5)
+                b1=tk.Button(black_promotion_frame, text="Queen", command=lambda: choose("Q"))
                 b1.pack(side='right')
-                b2=tk.Button(rightFrame, text="Knight", command=lambda: choose("K"))
+                b2=tk.Button(black_promotion_frame, text="Knight", command=lambda: choose("K"))
                 b2.pack(side='right')
-                b3=tk.Button(rightFrame, text="Rook", command=lambda: choose("R"))
+                b3=tk.Button(black_promotion_frame, text="Rook", command=lambda: choose("R"))
                 b3.pack(side='right')
-                b4=tk.Button(rightFrame, text="Bishop", command=lambda: choose("B"))
+                b4=tk.Button(black_promotion_frame, text="Bishop", command=lambda: choose("B"))
                 b4.pack(side='right')
                 root.wait_variable(selected)
                 if selected.get()=='Q':
@@ -369,7 +437,7 @@ def promotion (piece):
                 b2.destroy()
                 b3.destroy()
                 b4.destroy()
-        
+                black_promotion_frame.destroy() 
 def check(position,piece):
         moves=[]
         if 'white' in piece:
@@ -721,20 +789,54 @@ def get_moves(piece):
                 return king_moves(piece)
         if 'Pawn' in piece:
                 return pawn_moves(piece)
-
 def on_check_moves(piece):
         moves=[]
         if 'white' in piece:
                 for defender in white_pieces:
                         moves.extend(defender)
+def destroy_all():
+        for name,id in all_pieces.items():
+                board.delete(id)
+                piecePosition.pop(name)
+                white_pieces.clear()
+                black_pieces.clear()
+        all_pieces.clear()
 
-def end_game():
-        pass
+def stop_interaction():
+        for name,id in all_pieces.items():
+                board.tag_bind(id,'<Button-1>','')
+                board.tag_bind(id,'<Enter>','')
+                board.tag_bind(id,'<Leave>','')
+def restart():
+        destroy_all()
+        win_label.destroy()
+        global bt
+        if bt:
+                bt.destroy()
+        place_pieces()
+        outline()
+        game_status_label.config(text='Game Status: Active')
+        play()
+bt=None
+win_label=None
+def end_game(result):
+        global bt,win_label
+        if 'white' in result:
+                win_label=tk.Label(header, text=result, font=('Arial',25,'bold'),bg='grey',fg='snow',height=20,width=20)
+                win_label.place(relx=0.33, rely=0.5, anchor='center')
+                bt=tk.Button(header,text='New Game',fg='snow',bg='lightgrey',width=20,command=restart)
+                bt.place(relx=0.66, rely=0.5, anchor='center')
+        else:
+                win_label=tk.Label(header, text=result, font=('Arial',25,'bold'),bg='grey',fg='black',height=20,width=20)
+                win_label.place(relx=0.6, rely=0.5, anchor='center')
+                bt=tk.Button(header,text='New Game',fg='black',bg='lightgrey',width=20,command=restart)
+                bt.place(relx=0.33, rely=0.5, anchor='center')
+        game_status_label.config(text='Game Status: Active')
+        stop_interaction()
 #gameplay
-clicked_moves=[]
-
+avail_moves=[]
 def show_moves(piece):
-        back()
+        remove_avail_moves_outline()
         moves=get_moves(piece)
         if moves!=None:
                 x,y=piecePosition[piece]
@@ -761,9 +863,8 @@ def show_moves(piece):
                         board.itemconfig(rect, outline='royalblue1',width=4)
                         board.tag_unbind(rect,'<Enter>')
                         board.tag_unbind(rect,'<Leave>')
-                clicked_moves.append(rects)
+                avail_moves.append(rects)
         return moves
-
 def get_piece(rect):
     pos = None
     for i in range(8):
@@ -778,7 +879,6 @@ def get_piece(rect):
             return piece_name
         
     return None
-
 def get_pos(rect):
     pos = None
     for i in range(8):
@@ -788,25 +888,32 @@ def get_pos(rect):
                 return pos
         
     return pos
-
 def selected_move(event,piece,rect,moves):
         x,y=get_pos(rect)
         if(get_piece(rect)):
                 target_name=get_piece(rect)
-                if target_name in black_pieces:
-                        captured=tk.Label(leftFrame,text=unicode_pieces[target_name],font=('Arial',20))
-                        captured.pack(side='top')
+                if target_name in black_pieces:  
+                        if 'Pawn' in target_name:
+                                captured=tk.Label(white_captures_content_pawn,text=unicode_pieces[target_name],font=('Times new roman',20))
+                                captured.pack()
+                        else:
+                                captured=tk.Label(white_captures_content_others,text=unicode_pieces[target_name],font=('times new roman',20))
+                                captured.pack()
                         black_pieces.pop(target_name)
                 elif target_name in white_pieces:
-                        captured=tk.Label(rightFrame,text=unicode_pieces[target_name],font=('Arial',20))
                         white_pieces.pop(target_name)
-                        captured.pack(side='top')
+                        if 'Pawn' in target_name:
+                                captured=tk.Label(black_captures_content_pawn,text=unicode_pieces[target_name],font=('Times new roman',20))
+                                captured.pack()
+                        else:
+                                captured=tk.Label(black_captures_content_others,text=unicode_pieces[target_name],font=('times new roman',20))
+                                captured.pack()
                 target=all_pieces[target_name]
                 board.delete(target)
                 all_pieces.pop(target_name)
                 piecePosition.pop(target_name)
-        back()
-        backButtons(moves,'white' in piece)
+        remove_avail_moves_outline()
+        remove_click(moves,'white' in piece)
         piecePosition[piece]=get_pos(rect)
         piece_id=all_pieces[piece]
         board.coords(piece_id,boardPositions[x][y]['x'],boardPositions[x][y]['y'])
@@ -818,10 +925,7 @@ def selected_move(event,piece,rect,moves):
                         promotion(piece)
         result= play()
         if result:
-                label=tk.Label(rightFrame,text=result)
-                label.pack(fill='x')
-                end_game()
-
+                end_game(result)
 def clicked_piece_moves(event,piece):
         moves=show_moves(piece)
         for move in moves:
@@ -830,8 +934,9 @@ def clicked_piece_moves(event,piece):
                         board.tag_bind(rectangles[i][j],'<Button-1>',lambda event,rect=rectangles[i][j]: selected_move(event,piece,rect,moves))
                 else:
                         board.tag_bind(all_pieces[get_piece(rectangles[i][j])],'<Button-1>',lambda event,rect=rectangles[i][j]:selected_move(event,piece,rect,moves))
-
 def whiteturn():
+        remove_outline()
+        outline()
         if not check(piecePosition['whiteKing'],'whiteKing'):
                 for piece in white_pieces:
                         board.tag_bind(white_pieces[piece], '<Button-1>',lambda event,p=piece: clicked_piece_moves(event,p))
@@ -842,8 +947,9 @@ def whiteturn():
                         print('Black Won')
                         return 'Black won'
         return ''
-
 def blackturn():
+        remove_outline()
+        outline()
         if not check(piecePosition['blackKing'],'blackKing'):
                 for piece in black_pieces:
                         board.tag_bind(black_pieces[piece], '<Button-1>',lambda event,p=piece: clicked_piece_moves(event,p))
@@ -860,21 +966,31 @@ def play():
         global i
         if i%2==0:
                 print("whiteTurn")
+                turn_label.config(text='Turn: White')
                 i+=1
                 return whiteturn()
         else:
                 i+=1
+                turn_label.config(text='Turn: Black')
                 print("blackTurn")
                 return blackturn()
         
+def start():
+        global bt
+        if bt:
+                bt.destroy()
+        place_pieces()
+        outline()
+        game_status_label.config(text='Game Status: Active')
+        play()
 
-bt =tk.Button(leftFrame,text="Start",command=play)
-bt.pack(side='right',fill='x')
+
+bt =tk.Button(header,text="Start Game",command=start,bg='grey',fg='black',font=('Times New roman',14,'bold'))
+bt.pack(side='top',padx=100,ipady=8)
 root.mainloop()
 
 #Problems:
 #Outlining Errors
-#Promotion
 #King move to capture and in check
 #Stalemate
 
